@@ -22,6 +22,9 @@
   #define ALIGN_INT  32
   #define ALIGN_REAL 64
 
+	#include <stdio.h>
+	#include <stdlib.h>
+
   #include "spike_debug.h"
 
   typedef int spike_int;

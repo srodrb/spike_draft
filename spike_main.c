@@ -18,19 +18,18 @@
  * =====================================================================================
  */
 
-#include "spike_debug.h"
-#include "spike_matrix.h"
 #include "spike_common.h"
+#include "spike_matrix.h"
 
 int main(int argc, const char *argv[])
 {
-  // spike_info("Vamos con el programa!\n", 0);
+  spike_debug("Vamos con el programa!\n");
 
   spike_csr_matrix* M = load_csr_matrix("inputfile.bin");
 
   free_csr_matrix( M);
 
-  // spike_info("Fin del programa\n");
+  spike_debug("Fin del programa\n");
   return 0;
 }
 

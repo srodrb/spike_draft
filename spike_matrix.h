@@ -21,7 +21,6 @@
   #define _SPIKE_MATRIX_H_ 
   
   #include "spike_common.h"
-  #include "spike_debug.h"
   
   // =========================================================== //
   //             CSR matrix definition and functions             //
@@ -41,9 +40,9 @@
 
   void free_csr_matrix ( spike_csr_matrix* Matrix );
   
-  spike_csr_matrix* load_csr_matrix    ( const char* filename);
+  spike_csr_matrix* load_csr_matrix ( const char* filename);
 
-  spike_csr_matrix* create_csr_matrix   ( spike_int ncols,
+  spike_csr_matrix* create_csr_matrix ( spike_int ncols,
                                           spike_int nrows,
                                           spike_int nnz,
                                           spike_int *cols, 
@@ -54,18 +53,6 @@
   // =========================================================== //
   //             CSC matrix definition and functions             //
   // =========================================================== //
-
-  typedef struct
-  {
-    spike_int ncols;
-    spike_int nrows;
-    spike_int nnz;
-
-    spike_int  *i;
-    spike_int  *j;
-    spike_real *c;
-  
-  } spike_csc_matrix;
 
 
 
