@@ -39,7 +39,11 @@
   }spike_csr_matrix;
 
   void free_csr_matrix ( spike_csr_matrix* Matrix );
-  
+
+	void show_csr_matrix ( spike_csr_matrix* M );
+	
+	spike_csr_matrix* test_csr_matrix (void); 
+ 
   spike_csr_matrix* load_csr_matrix ( const char* filename);
 
   spike_csr_matrix* create_csr_matrix ( spike_int ncols,

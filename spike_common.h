@@ -36,6 +36,9 @@
   #endif
   
   void* spike_malloc( const int aligment, const size_t size); 
+	
+	void spike_free (void* ptr);
 
+	void spike_wellcome_header ( void );
 
 #endif // end of _SPIKE_COMMON_H_ 
