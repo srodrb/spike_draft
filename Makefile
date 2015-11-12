@@ -1,5 +1,5 @@
-CC      = gcc
-CFLAGS  = -O2 -std=c99
+CC      = icc
+CFLAGS  = -g -O2 -std=c99
 DEFINES = -DDEBUG 
 CLIBS   = 
 CINCS   = 

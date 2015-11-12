@@ -31,16 +31,17 @@
     spike_int ncols;
     spike_int nrows;
     spike_int nnz;
-
-    spike_int  *i;
-    spike_int  *j;
-    spike_real *c;
+    spike_int  *rowptr;
+    spike_int  *colind;
+    spike_real *coeffs;
   
   }spike_csr_matrix;
 
   void free_csr_matrix ( spike_csr_matrix* Matrix );
 
 	void show_csr_matrix ( spike_csr_matrix* M );
+
+	void show_csr_subset( spike_csr_matrix *M, spike_int first_index, spike_int last_index);
 	
 	spike_csr_matrix* test_csr_matrix (void); 
  

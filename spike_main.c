@@ -43,8 +43,7 @@ int main(int argc, const char *argv[])
 
   spike_opentimer( &starttime );
   
-  spike_solver_handler* handler = analyse_matrix( M );
-  free_handler ( handler );
+  spike_factorize( M );
 
   spike_closetimer( &starttime, &solvertime);
 

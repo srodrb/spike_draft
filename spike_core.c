@@ -52,8 +52,14 @@ void free_handler ( spike_solver_handler* handler )
   free( handler             ); handler             = NULL;
 };
 
-void spike_solver ( spike_csr_matrix* M)
+void spike_factorize ( spike_csr_matrix* M)
 {
 	// esto debe ser una logica mas compleja en un futuro
 	spike_solver_handler* handler = analyse_matrix( M );
+
+	// ahora tenemos que descomponer la matriz e invertir los bloques.
+	show_csr_subset( M, 1, 3);
+	show_csr_subset( M, 2, 4);
+
+	free_handler( handler );
 };

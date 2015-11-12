@@ -50,7 +50,7 @@
 
   spike_solver_handler* analyse_matrix(spike_csr_matrix* M);
   void free_handler ( spike_solver_handler* handler );
-  void spike_solver ( spike_csr_matrix* M);
+  void spike_factorize ( spike_csr_matrix* M);
 
 #endif // end of  _SPIKE_CORE_H_ 
 
