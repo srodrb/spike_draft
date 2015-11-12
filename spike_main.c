@@ -20,24 +20,17 @@
 
 #include "spike_common.h"
 #include "spike_matrix.h"
+#include "spike_core.h"
 
 int main(int argc, const char *argv[])
 {
-	// ========================================= //
-	//            Solver Configuraion            // 
-	// ========================================= //
-	
-	const spike_int P = 2; // number of partitions
+	double starttime, solvertime;
 
-
-	
 	// ========================================= //
-	//            Solver Execution               // 
+	//            Solver Execution               //
 	// ========================================= //
 	
 	spike_wellcome_header();
-
-  spike_debug("Vamos con el programa!\n");
 
   spike_csr_matrix* M = test_csr_matrix();
 
@@ -48,10 +41,17 @@ int main(int argc, const char *argv[])
 
 	// necesito un metodo para computar el bandwidth maximo de la matriz. !!	
 
+  spike_opentimer( &starttime );
+  
+  spike_solver_handler* handler = analyse_matrix( M );
+  free_handler ( handler );
+
+  spike_closetimer( &starttime, &solvertime);
+
 
   free_csr_matrix( M);
 
-  spike_debug("Fin del programa\n");
+  spike_debug("Factorization took %.12f seconds\n", solvertime);
   return 0;
 }
 

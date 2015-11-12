@@ -23,7 +23,7 @@
 	#include <errno.h>
 	#include <string.h>
 
-	#ifdef DEBUG
+	#ifndef DEBUG
 		#define spike_debug(M, ...)
 	#else
 		#define spike_debug(M, ...) do{ fprintf(stderr, "[HSPIKE DEBUG] %s:%d: " M "\n", __FILE__, __LINE__, ##__VA_ARGS__); } while(0)
@@ -37,9 +37,9 @@
 
 	#define spike_log_info(M, ...) do{ fprintf(stderr, "[HSPIKE INFO] (%s:%d) " M "\n", __FILE__, __LINE__, ##__VA_ARGS__); } while(0)
 
-	#define check(A, M, ...) if(!(A)) { spike_log_err(M, ##__VA_ARGS__); errno=0; goto error; }
+	#define spike_check(A, M, ...) if(!(A)) { spike_log_err(M, ##__VA_ARGS__); errno=0; goto error; }
 
-	#define sentinel(M, ...)  { spike_log_err(M, ##__VA_ARGS__); errno=0; goto error; }
+	#define spike_sentinel(M, ...)  { spike_log_err(M, ##__VA_ARGS__); errno=0; goto error; }
 
 	#define check_mem(A) check((A), "Out of memory.")
 

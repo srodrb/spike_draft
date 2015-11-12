@@ -24,6 +24,7 @@
 
 	#include <stdio.h>
 	#include <stdlib.h>
+  #include <sys/time.h>
 
   #include "spike_debug.h"
 
@@ -35,10 +36,12 @@
     typedef double spike_real;
   #endif
   
-  void* spike_malloc( const int aligment, const size_t size); 
-	
-	void spike_free (void* ptr);
+  void* spike_malloc ( const int aligment, const size_t size); 	
+	void  spike_free   (void* ptr);
 
 	void spike_wellcome_header ( void );
+
+  void spike_opentimer  ( double *starttime);
+  void spike_closetimer ( double *starttime, double *apptime );
 
 #endif // end of _SPIKE_COMMON_H_ 
