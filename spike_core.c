@@ -24,8 +24,10 @@ spike_solver_handler* analyse_matrix(spike_csr_matrix* M)
                     handler->partitions * sizeof( spike_device));
 
   spike_int regular_blockdim = (spike_int) (M->nrows / handler->partitions );
+  spike_int extra_rows       = (spike_int) (M->nrows % handler->partitions );
 
-  if ( M->nrows % handler->partitions == 0 ){
+
+  if ( extra_rows == 0 ){
     for(int i=0; i < handler->partitions; i++)
       handler->block_rows[i] = regular_blockdim; 
     
@@ -34,13 +36,26 @@ spike_solver_handler* analyse_matrix(spike_csr_matrix* M)
     for(int i=0; i<(handler->partitions -1); i++)
       handler->block_rows[i] = regular_blockdim; 
    
-    handler->block_rows[handler->partitions -1] = (spike_int) (M->nrows % handler->partitions);
+    handler->block_rows[handler->partitions -1] = regular_blockdim + extra_rows;
   }
   
-  // set target device for every diagonal block
   for( int i=0; i < handler->partitions; i++)
     handler->device[i] = (spike_device) {CPU,0,READY};
-  
+
+
+  #ifdef DEBUG
+    spike_debug("Spike handler: solving approach:\n");
+    spike_debug("--------------------------------\n");
+    
+    for(int i=0; i < handler->partitions; i++){
+      spike_debug("    Partition %d \n", i);
+      spike_debug("    Device (arch,id,status)  (%d,%d,%d)\n", 
+                  handler->device[i].arch, handler->device[i].id, handler->device[i].state);
+      spike_debug("    Number of rows in block: %d\n", handler->block_rows[i]);
+      spike_debug("--------------------------------\n");
+    }
+  #endif
+
 
   return handler;
 };
@@ -57,9 +72,10 @@ void spike_factorize ( spike_csr_matrix* M)
 	// esto debe ser una logica mas compleja en un futuro
 	spike_solver_handler* handler = analyse_matrix( M );
 
+
 	// ahora tenemos que descomponer la matriz e invertir los bloques.
+	show_csr_subset( M, 0, 2);
 	show_csr_subset( M, 1, 3);
-	show_csr_subset( M, 2, 4);
 
 	free_handler( handler );
 };

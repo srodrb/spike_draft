@@ -1,5 +1,9 @@
 #include "spike_matrix.h"
 
+// =========================================================== //
+//             CSR matrix definition and functions             //
+// =========================================================== //
+
 void free_csr_matrix ( spike_csr_matrix* Matrix )
 {
   free ( Matrix->colind ); Matrix->colind = NULL;
@@ -107,36 +111,45 @@ void show_csr_matrix( spike_csr_matrix *M)
 void show_csr_subset( spike_csr_matrix *M, spike_int first_index, spike_int last_index)
 {
 	#ifdef DEBUG
-	spike_debug("\n  --- CSR sublock --- \n");
+    spike_debug("\n  --- CSR sublock --- \n");
 
-	spike_int nrows = (last_index - first_index) +1;
+    if( last_index >= M->nrows) {
+      spike_debug("Last index must be smaller than the number of rows in the matrix!\n");
+      last_index = M->nrows;
+    }
 
-	spike_real* D = (spike_real*) spike_malloc( ALIGN_REAL, M->ncols * nrows * sizeof(spike_real) );
-	
-	for(int i=0; i<(M->ncols * nrows); i++) D[i] = (spike_real) 0.0;
+    spike_int nrows = (last_index - first_index) +1;
 
-	// build dense matrix from CSR sparse matrix
-	for(int i=first_index; i<last_index; i++)
-		for(int j = M->rowptr[i]; j < M->rowptr[i+1]; j++){
-			spike_int localIndex = (i - first_index) * M->ncols + M->colind[j];
-			D[localIndex] = M->coeffs[j];
-		}
+    spike_real* D = (spike_real*) spike_malloc( ALIGN_REAL, M->ncols * nrows * sizeof(spike_real) );
+    
+    for(int i=0; i< (M->ncols * nrows); i++) D[i] = (spike_real) 0.0;
 
-	// print matrix
-	for(int i=0; i<nrows; i++){
-		for(int j=0; j<M->ncols; j++){
-			spike_real coef = D[i*M->ncols + j];		
-			
-			if( coef >= 0.0)
-				fprintf(stderr, " %.2f", coef);
-			else
-				fprintf(stderr, "%.2f", coef);
-		}
-		fprintf(stderr, "\n");
-	}
+    // build dense matrix from CSR sparse matrix
+    for(int i=first_index; i<last_index; i++)
+      for(int j = M->rowptr[i]; j < M->rowptr[i+1]; j++){
+        spike_int localIndex = (i - first_index) * M->ncols + M->colind[j];
+        D[localIndex] = M->coeffs[j];
+      }
 
-	fprintf(stderr, "\n");
-	spike_free( D );
+    for(int i=0; i<(M->ncols * nrows); i++){
+      fprintf(stderr, "%f\n", D[i] );
+    }
+
+    // print matrix
+    for(int i=0; i<nrows; i++){
+      for(int j=0; j<M->ncols; j++){
+        spike_real coef = D[i*M->ncols + j];		
+        
+        if( coef >= 0.0)
+          fprintf(stderr, " %.2f", coef);
+        else
+          fprintf(stderr, "%.2f", coef);
+      }
+      fprintf(stderr, "\n");
+    }
+
+    fprintf(stderr, "\n");
+    spike_free( D );
 	#endif
 }
 
@@ -157,3 +170,101 @@ spike_csr_matrix* load_csr_matrix    ( const char* filename)
   return Matrix;
 };
 
+
+
+// =========================================================== //
+//             CSC matrix definition and functions             //
+// =========================================================== //
+
+void free_csc_matrix ( spike_csc_matrix* Matrix )
+{
+  free ( Matrix->colptr ); Matrix->rowind = NULL;
+  free ( Matrix->rowind ); Matrix->colptr = NULL;
+  free ( Matrix->coeffs ); Matrix->coeffs = NULL;
+  free ( Matrix         ); Matrix         = NULL;
+};
+
+spike_csc_matrix* test_csc_matrix (void)
+{
+  spike_csc_matrix* Matrix = (spike_csc_matrix*) spike_malloc( ALIGN_INT, sizeof(spike_csc_matrix));
+
+	// initialize structure members
+  Matrix->nnz    = (spike_int) 13;
+  Matrix->ncols  = (spike_int)  5;
+  Matrix->nrows  = (spike_int)  5;
+  Matrix->rowind = (spike_int* ) spike_malloc( ALIGN_INT , Matrix->nnz        * sizeof(spike_int  ));
+  Matrix->colptr = (spike_int* ) spike_malloc( ALIGN_INT , (Matrix->nrows +1) * sizeof(spike_int  ));
+  Matrix->coeffs = (spike_real*) spike_malloc( ALIGN_REAL, Matrix->nnz        * sizeof(spike_real ));
+
+	// coefficients
+	Matrix->coeffs[ 0] = (spike_real)  3.0;	
+	Matrix->coeffs[ 1] = (spike_real)  1.0;	
+	Matrix->coeffs[ 2] = (spike_real) -1.0;	
+	Matrix->coeffs[ 3] = (spike_real)  4.0;	
+	Matrix->coeffs[ 4] = (spike_real)  1.0;	
+	Matrix->coeffs[ 5] = (spike_real) -1.0;	
+	Matrix->coeffs[ 6] = (spike_real)  2.0;	
+	Matrix->coeffs[ 7] = (spike_real)  1.0;	
+	Matrix->coeffs[ 8] = (spike_real) -1.0;	
+	Matrix->coeffs[ 9] = (spike_real)  1.0;	
+	Matrix->coeffs[10] = (spike_real)  1.0;	
+	Matrix->coeffs[11] = (spike_real) -1.0;	
+	Matrix->coeffs[12] = (spike_real)  5.0;	
+
+	// column indices
+	Matrix->rowind[ 0] = (spike_int) 0;
+	Matrix->rowind[ 1] = (spike_int) 1;
+	Matrix->rowind[ 2] = (spike_int) 0;
+	Matrix->rowind[ 3] = (spike_int) 1;
+	Matrix->rowind[ 4] = (spike_int) 2;
+	Matrix->rowind[ 5] = (spike_int) 1;
+	Matrix->rowind[ 6] = (spike_int) 2;
+	Matrix->rowind[ 7] = (spike_int) 3;
+	Matrix->rowind[ 8] = (spike_int) 2;
+	Matrix->rowind[ 9] = (spike_int) 3;
+	Matrix->rowind[10] = (spike_int) 4;
+	Matrix->rowind[11] = (spike_int) 3;
+	Matrix->rowind[12] = (spike_int) 4;
+
+	// coefficiemts
+	Matrix->colptr[0] = (spike_int)  0;
+	Matrix->colptr[1] = (spike_int)  2;
+	Matrix->colptr[2] = (spike_int)  5;
+	Matrix->colptr[3] = (spike_int)  8;
+	Matrix->colptr[4] = (spike_int) 11;
+	Matrix->colptr[5] = (spike_int) 13;
+
+	return Matrix;
+};
+
+void show_csc_matrix( spike_csc_matrix *M)
+{
+  // TODO implement
+};
+
+void show_csc_subset( spike_csc_matrix *M, spike_int first_index, spike_int last_index)
+{
+
+};
+
+
+spike_csc_matrix* load_csc_matrix    ( const char* filename)
+{
+  spike_csc_matrix* Matrix = (spike_csc_matrix*) spike_malloc( ALIGN_INT, sizeof(spike_csc_matrix));
+
+  Matrix->nnz    = 4;
+  Matrix->ncols  = 8;
+  Matrix->nrows  = 8;
+  Matrix->rowind = (spike_int* ) spike_malloc( ALIGN_INT , Matrix->nnz       * sizeof(spike_int  ));
+  Matrix->colptr = (spike_int* ) spike_malloc( ALIGN_INT , (Matrix->nrows+1) * sizeof(spike_int  ));
+  Matrix->coeffs = (spike_real*) spike_malloc( ALIGN_REAL, Matrix->nnz       * sizeof(spike_real ));
+
+  // TODO read data from file
+
+  return Matrix;
+};
+
+
+// =========================================================== //
+//             Format conversion routines                      //
+// =========================================================== //
