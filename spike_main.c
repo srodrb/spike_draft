@@ -21,6 +21,7 @@
 #include "spike_common.h"
 #include "spike_matrix.h"
 #include "spike_core.h"
+#include "spike_algebra.h"
 
 int main(int argc, const char *argv[])
 {
@@ -49,6 +50,8 @@ int main(int argc, const char *argv[])
 
 
   free_csr_matrix( M);
+
+	superlu_solve();
 
   spike_debug("Factorization took %.12f seconds\n", solvertime);
   return 0;

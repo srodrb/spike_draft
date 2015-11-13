@@ -16,6 +16,9 @@ spike_solver_handler* analyse_matrix(spike_csr_matrix* M)
   spike_solver_handler* handler = (spike_solver_handler*) spike_malloc( ALIGN_INT, 
                                  sizeof(spike_solver_handler));
 
+	handler->bw         = 3;
+	handler->ku         = 1;
+	handler->lu         = 1;
   handler->partitions = 2;
   handler->block_rows = (spike_int*) spike_malloc( ALIGN_INT,  
                         handler->partitions * sizeof(spike_int));
@@ -72,10 +75,19 @@ void spike_factorize ( spike_csr_matrix* M)
 	// esto debe ser una logica mas compleja en un futuro
 	spike_solver_handler* handler = analyse_matrix( M );
 
-
 	// ahora tenemos que descomponer la matriz e invertir los bloques.
 	show_csr_subset( M, 0, 2);
 	show_csr_subset( M, 1, 3);
 
+	// si usamos SuperLU tenemos que convertir a formato CSC
+	spike_csc_matrix* csc_matrix = csr2csc( M );
+
+	free_csc_matrix( csc_matrix );
+
+
+	// ahora vamos a tratar de calcular los spikes para una de las matrices.
+	// compute_V( M, handler->ku ); 
+
 	free_handler( handler );
 };
+

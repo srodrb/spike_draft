@@ -23,8 +23,8 @@
 	#include "spike_common.h"
 	#include "spike_matrix.h"
 
-  #define BUSY  0
-  #define READY 1
+  #define WORKING  0
+  #define READY    1
 
   typedef enum {CPU,MIC,GPU} platform;
 
@@ -43,6 +43,9 @@
   }spike_device;
 
   typedef struct{
+		spike_int      bw;
+		spike_int      ku;
+		spike_int      lu;
     spike_int      partitions;
     spike_int      *block_rows;
     spike_device   *device;

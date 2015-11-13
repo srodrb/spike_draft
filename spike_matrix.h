@@ -21,6 +21,7 @@
   #define _SPIKE_MATRIX_H_ 
   
   #include "spike_common.h"
+	#include <mkl.h>
   
   // =========================================================== //
   //             CSR matrix definition and functions             //
@@ -88,7 +89,12 @@
                                           spike_real *coefs); 
 
 
+  // =========================================================== //
+  //             Format conversion functions                     //
+  // =========================================================== //
 
+	spike_csr_matrix* csc2csr( spike_csc_matrix* CSC );
+	spike_csc_matrix* csr2csc( spike_csr_matrix* CSR );
 
 #endif // end of _SPIKE_MATRIX_H_ 
 

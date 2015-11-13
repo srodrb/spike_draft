@@ -32,12 +32,14 @@
 
   #ifndef DOUBLE_PREC
     typedef float spike_real;
+		#define CSRCSC mkl_scsrcsc 
   #else
     typedef double spike_real;
+		#define CSRCSC mkl_dcsrcsc 
   #endif
   
   void* spike_malloc ( const int aligment, const size_t size); 	
-	void  spike_free   (void* ptr);
+	void  spike_free   ( void* ptr );
 
 	void spike_wellcome_header ( void );
 

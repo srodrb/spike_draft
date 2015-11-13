@@ -125,15 +125,11 @@ void show_csr_subset( spike_csr_matrix *M, spike_int first_index, spike_int last
     for(int i=0; i< (M->ncols * nrows); i++) D[i] = (spike_real) 0.0;
 
     // build dense matrix from CSR sparse matrix
-    for(int i=first_index; i<last_index; i++)
+    for(int i=first_index; i<= last_index; i++)
       for(int j = M->rowptr[i]; j < M->rowptr[i+1]; j++){
         spike_int localIndex = (i - first_index) * M->ncols + M->colind[j];
         D[localIndex] = M->coeffs[j];
       }
-
-    for(int i=0; i<(M->ncols * nrows); i++){
-      fprintf(stderr, "%f\n", D[i] );
-    }
 
     // print matrix
     for(int i=0; i<nrows; i++){
@@ -268,3 +264,54 @@ spike_csc_matrix* load_csc_matrix    ( const char* filename)
 // =========================================================== //
 //             Format conversion routines                      //
 // =========================================================== //
+
+spike_csr_matrix* csc2csr( spike_csc_matrix* CSC )
+{
+	spike_csr_matrix* CSR = (spike_csr_matrix*) \
+													spike_malloc( ALIGN_INT, sizeof(spike_csr_matrix));
+	
+	CSR->ncols  = CSC->ncols;
+	CSR->nrows  = CSC->nrows;
+	CSR->nnz    = CSC->nnz;
+	CSR->rowptr = (spike_int* ) spike_malloc( ALIGN_INT , (CSR->nrows+1) * sizeof(spike_int ));
+  CSR->colind = (spike_int* ) spike_malloc( ALIGN_INT ,  CSR->nnz	     * sizeof(spike_int ));
+	CSR->coeffs = (spike_real*) spike_malloc( ALIGN_REAL,  CSR->nnz      * sizeof(spike_real));
+
+
+	spike_int job[8] = {1,0,0,0,0,0,0,0};
+	// TESTIT	job[5] = 1;
+	spike_int info;
+
+	CSRCSC( job, &CSR->nrows, CSR->coeffs, CSR->colind, CSR->rowptr, CSC->coeffs, CSC->rowind, CSC->colptr, &info);
+
+	free_csc_matrix( CSC );
+
+	spike_debug("Matrix was converted from CSC to CSR succesfully!\n");
+
+	return CSR;
+};
+
+spike_csc_matrix* csr2csc( spike_csr_matrix* CSR )
+{
+	spike_csc_matrix* CSC = (spike_csc_matrix*) \
+													spike_malloc( ALIGN_INT, sizeof(spike_csc_matrix));
+	
+	CSC->ncols  = CSR->ncols;
+	CSC->nrows  = CSR->nrows;
+	CSC->nnz    = CSR->nnz;
+	CSC->colptr = (spike_int* ) spike_malloc( ALIGN_INT , (CSC->ncols+1) * sizeof(spike_int ));
+  CSC->rowind = (spike_int* ) spike_malloc( ALIGN_INT ,  CSC->nnz	     * sizeof(spike_int ));
+	CSC->coeffs = (spike_real*) spike_malloc( ALIGN_REAL,  CSC->nnz      * sizeof(spike_real));
+
+	spike_int job[8] = {0,0,0,0,0,0,0,0};
+	// TESTIT	job[5] = 1;
+	spike_int info;
+
+	CSRCSC( job, &CSR->nrows, CSR->coeffs, CSR->colind, CSR->rowptr, CSC->coeffs, CSC->rowind, CSC->colptr, &info);
+
+	free_csr_matrix( CSR );
+
+	spike_debug("Matrix was converted from CSR to CSC succesfully!\n");
+
+	return CSC;
+}

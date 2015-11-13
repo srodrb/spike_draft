@@ -1,0 +1,9 @@
+Revisar las rutinas de conversion entre formatos de matrix de MKL, no tengo claro si tengo que sobre escribir la entrada o no, es
+el parametro 6 del array job. Puede ser mas eficiente.
+
+En un futuro tengo que ocultar el formato de matriz en un handler para hacer transparente el uso de las functiones y las
+conversiones de formato. La forma que emplea BSIT mola.
+
+Tengo que comparar el rendimiento de la SuperLU enlazando con MKL sequential. (según pone en el readme)
+
+Tengo que usar los expert drivers de superLU para optimizar algunas partes del proceso de inversion de los bloques.
